@@ -7,9 +7,11 @@ import { InputManager } from "./InputManager"
 
 import "./styles.css";
 
-export const PlayerData = createContext({
-  coord: [0, 0, 0]
-})
+
+//export const PlayerData = createContext(PlayerState)
+//export const PlayerData = createContext({
+  //coord: [0, 0, 0]
+//})
 
 // Geometry
 function BackDrop() {
@@ -50,10 +52,29 @@ DirectionalLight.defaultProps = {
 function App() {
   let inputManager = new InputManager()
 
+  let playerState = {
+    coord: [0, 0, 0],
+  }
 
+  function movePlayer(playerState, keyData) {
+    console.log("playerState:", playerState.coord, "keyData:", keyData)
+    let [newX, newY, newZ] = playerState.coord
+    console.log("newX/Y/Z:", newX, newY, newZ);
+    let {x, y, z} = keyData;
+    console.log("keyData (x, y, z)", x, y, z);
+    newX = newX + x
+    newY = newY + y
+    newZ = newZ + z
+    return [newX, newY, newZ]
+    //console.log("returning: ", newCoord);
+    //return newCoord;
+  };
 
   const handleInput = (action, data) => {
     console.log(`handleinput: ${action}:${JSON.stringify(data)}`)
+    console.log("73 return: ", movePlayer(playerState, data))
+    playerState.coord = movePlayer(playerState, data)
+    console.log(playerState.coord)
     //let newWorld = new World();
     //Object.assign(newWorld, world)
     //newWorld.movePlayer(data.x, data.y)
@@ -71,35 +92,33 @@ function App() {
   })
 
   return (
-    <PlayerData.Provider>
-      <Canvas
-        camera={{ position: [3, 3, 3] }}
-        className="canvas"
-      >
-        <BackDrop />
-        <DirectionalLight brightness={10} color={"#ffffff"} position={[3, 3, 3]} />
-        <PlayerData.Provider>
-          <>
-          <Box position={[0, 0, 0]} />
-          <Box position={[1, 0, 0]} />
-          </>
-        </PlayerData.Provider>
-        {/*
-        <Box position={[0, 0, 1]} />
-        <Box position={[-1, 0, 0]} />
-        <Box position={[0, -1, 0]} />
-        <Box position={[0, 0, -1]} />
-        <Box position={[0, 0, -1]} />
-        <Box position={[0, 0, -2]} />
-        <Box position={[1, 0, -2]} />
-        <Box position={[2, 0, -2]} />
-        <Box position={[2, 1, -2]} />
-        <Box position={[0, 0, 1]} />
-        <Box position={[0, 0, 2]} />
-        <Box position={[0, 0, 3]} />
-        */}
-      </Canvas>
-    </PlayerData.Provider>
+    //<PlayerData.Provider>
+    <Canvas
+      camera={{ position: [3, 3, 3] }}
+      className="canvas"
+    >
+      <BackDrop />
+      <DirectionalLight brightness={10} color={"#ffffff"} position={[3, 3, 3]} />
+      {/*<PlayerData.Provider>*/}
+      <Box playerData={playerState} position={[0, 0, 0]} />
+      <Box playerData={playerState} position={[1, 0, 0]} />
+      <Box playerData={playerState} position={[0, 0, 1]} />
+      <Box playerData={playerState} position={[-1, 0, 0]} />
+      <Box playerData={playerState} position={[0, -1, 0]} />
+      <Box playerData={playerState} position={[0, 0, -1]} />
+      <Box playerData={playerState} position={[0, 0, -1]} />
+      <Box playerData={playerState} position={[0, 0, -2]} />
+      <Box playerData={playerState} position={[1, 0, -2]} />
+      <Box playerData={playerState} position={[2, 0, -2]} />
+      <Box playerData={playerState} position={[2, 1, -2]} />
+      <Box playerData={playerState} position={[0, 0, 1]} />
+      <Box playerData={playerState} position={[0, 0, 2]} />
+      <Box playerData={playerState} position={[0, 0, 3]} />
+      {/*</PlayerData.Provider>*/}
+      {/*
+      */}
+    </Canvas>
+    //</PlayerData.Provider>
   );
 }
 
