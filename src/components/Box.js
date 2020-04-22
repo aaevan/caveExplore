@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { interpRGB, degToRad } from "../helpers"
+import { interpRGB, degToRad, translateByPlayerCoord, findDistFromCoord } from "../helpers"
 import { useFrame } from "react-three-fiber";
 
 export function checkEqual(coordA = [9, 9, 9], coordB = [7, 7, 7]) {
@@ -20,11 +20,15 @@ export function Box({ scale, position, rotation, color, playerData}) {
   const [counter, setCounter] = useState(0);
   const [here, setHere] = useState(true);
   const [displayCoord, setDisplayCoord] = useState(position)
+  const [distFromPlayer, setDistFromPlayer] = useState(1);
+  const [distOpacity, setDistOpacity] = useState(1);
 
   //set rate of pulse
   useFrame(() => { here ? setCounter((counter + 4) % 360) : setCounter(0) })
   useFrame(() => { checkEqual(playerData.coord, position) ? setHere(true) : setHere(false) })
   useFrame(() => { setDisplayCoord(translateByPlayerCoord(playerData, baseCoord))})
+  useFrame(() => { setDistFromPlayer(findDistFromCoord(playerData.coord, baseCoord))})
+  useFrame(() => { setDistOpacity(.5 / distFromPlayer ** 2) })
 
   const pulseAB = (
     boolProperty=here, 
@@ -38,17 +42,6 @@ export function Box({ scale, position, rotation, color, playerData}) {
     } else {
       return `rgb(${ defaultColor })`;
     }
-  }
-
-  const translateByPlayerCoord = (playerData, baseCoord) => {
-    const coord = playerData.coord;
-    //console.log(coord)
-    let [x, y, z] = [
-      baseCoord[0] - coord[0],
-      baseCoord[1] - coord[1],
-      baseCoord[2] - coord[2],
-    ]
-    return [x, y, z]
   }
 
   return (
@@ -70,7 +63,7 @@ export function Box({ scale, position, rotation, color, playerData}) {
         color={pulseAB()}
         emissiveIntensity={.5}
         transparent={true}
-        opacity={.5}
+        opacity={distOpacity}
         roughness={0.1}
         metalness={0.1}
       />
@@ -79,7 +72,7 @@ export function Box({ scale, position, rotation, color, playerData}) {
 }
 
 Box.defaultProps = {
-  scale: [1, 1, 1],
+  scale: [.95, .95, .95],
   position: [0, 0, 0],
   rotation: [0, 0, 0],
   color: "grey"

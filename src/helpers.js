@@ -27,3 +27,23 @@ export const addCoords = (coordA, coordB) => {
   ]
 }
 
+export const translateByPlayerCoord = (playerData={coord:[0, 0, 0]}, baseCoord, smooth=true) => {
+  const coord = playerData.coord;
+  //console.log(coord)
+  let [x, y, z] = [
+    baseCoord[0] - coord[0],
+    baseCoord[1] - coord[1],
+    baseCoord[2] - coord[2],
+  ]
+  return [x, y, z]
+}
+
+export const findDistFromCoord = (coordA, coordB) => {
+  const [a, b, c] = [
+      coordB[0] - coordA[0],
+      coordB[1] - coordA[1],
+      coordB[2] - coordA[2],
+  ]
+  return Math.sqrt(a ** 2 + b ** 2 + c ** 2)
+}
+

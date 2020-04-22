@@ -34,25 +34,25 @@ export class InputManager {
     switch (e.keyCode) {
       //left arrow key
       case 65: //"west"
-        this.broadcast('west', { x: -1, y: 0, z: 0});
+        this.broadcast('move', { x: -1, y: 0, z: 0});
         break;
       case 83: //"south"
-        this.broadcast('south', { x: 0, y: -1, z: 0});
+        this.broadcast('move', { x: 0, y: -1, z: 0});
         break;
       case 68: //"east"
-        this.broadcast('east', { x: 1, y: 0, z: 0});
+        this.broadcast('move', { x: 1, y: 0, z: 0});
         break;
       case 87: //"north"
-        this.broadcast('north', { x: 0, y: 1, z: 0});
+        this.broadcast('move', { x: 0, y: 1, z: 0});
         break;
       case 81: //"up"
-        this.broadcast('up', { x: 0, y: 0, z: 1});
+        this.broadcast('move', { x: 0, y: 0, z: 1});
         break;
       case 90: //"down"
-        this.broadcast('down', { x: 0, y: 0, z: -1});
+        this.broadcast('move', { x: 0, y: 0, z: -1});
         break;
       case 32: //"spacebar"
-        this.broadcast('spacebar', { x: 0, y: 0, z: 0 })
+        this.broadcast('spawnCube', { x: 0, y: 0, z: 0 })
         break;
       default:
         break;

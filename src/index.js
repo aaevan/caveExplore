@@ -1,4 +1,4 @@
-import React, { useEffect, useFrame } from "react";
+import React, { useEffect, useState, useFrame } from "react";
 import ReactDOM from "react-dom";
 import { Canvas } from "react-three-fiber";
 import { Box } from "./components/Box"
@@ -63,7 +63,18 @@ function App() {
 
   const handleInput = (action, data) => {
     console.log(`handleinput: ${action}:${JSON.stringify(data)}`)
-    playerState.coord = movePlayer(playerState, data)
+    if (action === "move") {
+      let destination = movePlayer(playerState, data)
+      for (let coord of cubes) {
+        if (JSON.stringify(coord) == JSON.stringify(destination)) {
+          playerState.coord = destination;
+          break
+        }
+      }
+    }
+    if (action === "spawnCube") {
+    }
+
     console.log(playerState.coord)
   };
 
@@ -112,7 +123,7 @@ function App() {
   ]
 
   return (
-    <Canvas camera={{ position: [-3, 1, 3] }} className="canvas" >
+    <Canvas camera={{ position: [-3, 1, 3], rotation: [degToRad(80), 0, 0]}} className="canvas" >
       <BackDrop />
       { lights.map((coord) => <DirectionalLight brightness={15} color={"#ffffff"} position={coord} />)}
       { cubes.map((box) => <Box playerData={playerState} position={box} />)}
