@@ -1,50 +1,43 @@
-import React, { useEffect, createContext } from "react";
+import React, { useEffect, useFrame } from "react";
 import ReactDOM from "react-dom";
 import { Canvas } from "react-three-fiber";
 import { Box } from "./components/Box"
 import { InputManager } from "./InputManager"
-//import { interpRGB, degToRad } from "./helpers"
+import { degToRad } from "./helpers"
 
 import "./styles.css";
-
-
-//export const PlayerData = createContext(PlayerState)
-//export const PlayerData = createContext({
-  //coord: [0, 0, 0]
-//})
-
-// Geometry
-function BackDrop() {
-  return (
-    <mesh
-      receiveShadow
-      position={[0, -1, -5]}
-      rotation={[0, 1, 0]}
-    >
-      <planeBufferGeometry attach="geometry" args={[500, 500]} />
-      <meshStandardMaterial attach="material" color="white" />
-    </mesh>
-  );
-}
 
 // Lights
 function DirectionalLight({ brightness, color, position }) {
   return (
     <rectAreaLight
-      width={3}
-      height={3}
+      width={4}
+      height={4}
       color={color}
       intensity={brightness}
       position={position}
       lookAt={[0, 0, 0]}
-      penumbra={1}
+      penumbra={0}
       castShadow
     />
   );
 }
 
+function BackDrop() {
+  return (
+    <mesh
+      receiveShadow
+      position={[20, 0, -20]}
+      rotation={[0, degToRad(-45), 0]}
+    >
+      <planeBufferGeometry attach="geometry" args={[1000, 1000]} />
+      <meshStandardMaterial attach="material" color="white" />
+    </mesh>
+  );
+}
+
 DirectionalLight.defaultProps = {
-  color: "white",
+  color: "#ffffff",
   brightness: 10,
   position: [0, 0, 0]
 }
@@ -66,19 +59,12 @@ function App() {
     newY = newY + y
     newZ = newZ + z
     return [newX, newY, newZ]
-    //console.log("returning: ", newCoord);
-    //return newCoord;
   };
 
   const handleInput = (action, data) => {
     console.log(`handleinput: ${action}:${JSON.stringify(data)}`)
-    console.log("73 return: ", movePlayer(playerState, data))
     playerState.coord = movePlayer(playerState, data)
     console.log(playerState.coord)
-    //let newWorld = new World();
-    //Object.assign(newWorld, world)
-    //newWorld.movePlayer(data.x, data.y)
-    //setWorld(newWorld);
   };
 
   useEffect(() => {
@@ -91,34 +77,47 @@ function App() {
     }
   })
 
+  const cubes = [
+      [0, 0, 0],
+      [-2, 0, 0],
+      [-3, 0, 0],
+      [-4, 0, 0],
+      [-5, 0, 0],
+      [1, 0, 0],
+      [0, 1, 0],
+      [0, 0, 1],
+      [0, 0, 1],
+      [-1, 0, 0],
+      [0, -1, 0],
+      [0, 0, -1],
+      [0, 0, -1],
+      [0, 0, -2],
+      [1, 0, -2],
+      [2, 0, -2],
+      [2, 1, -2],
+      [0, 0, 1],
+      [0, 0, 2],
+      [0, 0, 3]
+  ]
+
+  const lights = [
+    [5, 5, 5],
+    [5, -5, -5],
+    [-5, 5, -5],
+    [-5, -5, 5],
+    [5, 5, -5],
+    [-5, 5, 5],
+    [5, -5, 5],
+    [-5, -5, -5],
+  ]
+
   return (
-    //<PlayerData.Provider>
-    <Canvas
-      camera={{ position: [3, 3, 3] }}
-      className="canvas"
-    >
+    <Canvas camera={{ position: [-3, 1, 3] }} className="canvas" >
       <BackDrop />
-      <DirectionalLight brightness={10} color={"#ffffff"} position={[3, 3, 3]} />
-      {/*<PlayerData.Provider>*/}
-      <Box playerData={playerState} position={[0, 0, 0]} />
-      <Box playerData={playerState} position={[1, 0, 0]} />
-      <Box playerData={playerState} position={[0, 0, 1]} />
-      <Box playerData={playerState} position={[-1, 0, 0]} />
-      <Box playerData={playerState} position={[0, -1, 0]} />
-      <Box playerData={playerState} position={[0, 0, -1]} />
-      <Box playerData={playerState} position={[0, 0, -1]} />
-      <Box playerData={playerState} position={[0, 0, -2]} />
-      <Box playerData={playerState} position={[1, 0, -2]} />
-      <Box playerData={playerState} position={[2, 0, -2]} />
-      <Box playerData={playerState} position={[2, 1, -2]} />
-      <Box playerData={playerState} position={[0, 0, 1]} />
-      <Box playerData={playerState} position={[0, 0, 2]} />
-      <Box playerData={playerState} position={[0, 0, 3]} />
-      {/*</PlayerData.Provider>*/}
-      {/*
-      */}
+      { lights.map((coord) => <DirectionalLight brightness={15} color={"#ffffff"} position={coord} />)}
+      { cubes.map((box) => <Box playerData={playerState} position={box} />)}
+      <Box playerData={playerState} color={"pink"} position={playerState.coord}/>
     </Canvas>
-    //</PlayerData.Provider>
   );
 }
 
