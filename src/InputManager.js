@@ -23,6 +23,9 @@ export class InputManager {
 
   //receives an event object from the event listener
   handleKeys = e => {
+    // I haven't figured out how to reorient the camera so z is up 
+    // for now, I've just swapped the directions of movement so it
+    // lines up with the camera
     //65: a "west"
     //83: s "south"
     //68: d "east"
@@ -37,19 +40,19 @@ export class InputManager {
         this.broadcast('move', { x: -1, y: 0, z: 0});
         break;
       case 83: //"south"
-        this.broadcast('move', { x: 0, y: -1, z: 0});
+        this.broadcast('move', { x: 0, y: 0, z: 1});
         break;
       case 68: //"east"
         this.broadcast('move', { x: 1, y: 0, z: 0});
         break;
       case 87: //"north"
-        this.broadcast('move', { x: 0, y: 1, z: 0});
+        this.broadcast('move', { x: 0, y: 0, z: -1});
         break;
       case 81: //"up"
-        this.broadcast('move', { x: 0, y: 0, z: 1});
+        this.broadcast('move', { x: 0, y: 1, z: 0});
         break;
       case 90: //"down"
-        this.broadcast('move', { x: 0, y: 0, z: -1});
+        this.broadcast('move', { x: 0, y: -1, z: 0});
         break;
       case 32: //"spacebar"
         this.broadcast('spawnCube', { x: 0, y: 0, z: 0 })

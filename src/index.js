@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useFrame } from "react";
+import React, { useEffect, } from "react";
 import ReactDOM from "react-dom";
 import { Canvas } from "react-three-fiber";
 import { Box } from "./components/Box"
@@ -6,6 +6,7 @@ import { InputManager } from "./InputManager"
 import { degToRad } from "./helpers"
 
 import "./styles.css";
+import { Marker } from "./components/Marker";
 
 // Lights
 function DirectionalLight({ brightness, color, position }) {
@@ -66,8 +67,9 @@ function App() {
     if (action === "move") {
       let destination = movePlayer(playerState, data)
       for (let coord of cubes) {
-        if (JSON.stringify(coord) == JSON.stringify(destination)) {
+        if (JSON.stringify(coord) === JSON.stringify(destination)) {
           playerState.coord = destination;
+          console.log("New coord:", destination);
           break
         }
       }
@@ -89,45 +91,41 @@ function App() {
   })
 
   const cubes = [
-      [0, 0, 0],
-      [-2, 0, 0],
-      [-3, 0, 0],
-      [-4, 0, 0],
-      [-5, 0, 0],
-      [1, 0, 0],
-      [0, 1, 0],
-      [0, 0, 1],
-      [0, 0, 1],
-      [-1, 0, 0],
-      [0, -1, 0],
-      [0, 0, -1],
-      [0, 0, -1],
-      [0, 0, -2],
-      [1, 0, -2],
-      [2, 0, -2],
-      [2, 1, -2],
-      [0, 0, 1],
-      [0, 0, 2],
-      [0, 0, 3]
+    [0, 0, 0],
+    [1, 0, 0],
+    [2, 0, 0],
+    [2, 0, -1],
+    [2, 0, -2],
+    [1, 0, -2],
+    [0, 0, -2],
+    [0, 0, -1],
+    [0, 1, 0],
+    [0, 2, 0],
+    [1, 2, 0],
+    [2, 2, 0],
+    [2, 1, 0],
+    [-1, 0, 0],
+    [-2, 0, 0],
+    [-2, 0, 1],
+    [-2, 0, 2],
+    [-1, 0, 2],
+    [0, 0, 2],
+    [0, 0, 1],
   ]
 
   const lights = [
     [5, 5, 5],
-    [5, -5, -5],
     [-5, 5, -5],
-    [-5, -5, 5],
     [5, 5, -5],
     [-5, 5, 5],
-    [5, -5, 5],
-    [-5, -5, -5],
   ]
 
   return (
-    <Canvas camera={{ position: [-3, 1, 3], rotation: [degToRad(80), 0, 0]}} className="canvas" >
+    <Canvas camera={{position: [-2, 1, 3]}} className="canvas" >
       <BackDrop />
-      { lights.map((coord) => <DirectionalLight brightness={15} color={"#ffffff"} position={coord} />)}
+      { lights.map((coord) => <DirectionalLight brightness={20} color={"#ffffff"} position={coord} />)}
       { cubes.map((box) => <Box playerData={playerState} position={box} />)}
-      <Box playerData={playerState} color={"pink"} position={playerState.coord}/>
+      <Marker />
     </Canvas>
   );
 }

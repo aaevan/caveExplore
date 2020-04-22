@@ -47,3 +47,25 @@ export const findDistFromCoord = (coordA, coordB) => {
   return Math.sqrt(a ** 2 + b ** 2 + c ** 2)
 }
 
+export const pulseAB = (
+  boolProperty, 
+  cycleTracker,
+  defaultColor=[100, 100, 100],
+  startColor=[100, 100, 100], 
+  endColor=[0, 255, 0],
+) => { 
+  if (boolProperty) {
+    return `rgb(${ interpRGB( startColor, endColor, (Math.sin(degToRad(cycleTracker)) / 2) + .5)})`;
+  } else {
+    return `rgb(${ defaultColor })`;
+  }
+}
+
+export function checkEqual(coordA = [9, 9, 9], coordB = [7, 7, 7]) {
+  for (let i = 0; i < 3; i++){
+    if (coordA[i] !== coordB[i]) {
+      return false
+    }
+  }
+  return true
+}
