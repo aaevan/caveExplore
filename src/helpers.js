@@ -29,7 +29,6 @@ export const addCoords = (coordA, coordB) => {
 
 export const translateByPlayerCoord = (playerData={coord:[0, 0, 0]}, baseCoord, smooth=true) => {
   const coord = playerData.coord;
-  //console.log(coord)
   let [x, y, z] = [
     baseCoord[0] - coord[0],
     baseCoord[1] - coord[1],

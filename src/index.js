@@ -6,7 +6,9 @@ import { InputManager } from "./InputManager"
 import { degToRad } from "./helpers"
 
 import "./styles.css";
-import { Marker } from "./components/Marker";
+//import { Marker } from "./components/Marker";
+//import { PlaneCube } from "./components/PlaneCube";
+import { Changeling } from "./components/Changeling";
 
 // Lights
 function DirectionalLight({ brightness, color, position }) {
@@ -90,28 +92,27 @@ function App() {
     }
   })
 
-  const cubes = [
+  let cubes = [
     [0, 0, 0],
     [1, 0, 0],
     [2, 0, 0],
-    [2, 0, -1],
-    [2, 0, -2],
-    [1, 0, -2],
-    [0, 0, -2],
-    [0, 0, -1],
-    [0, 1, 0],
-    [0, 2, 0],
-    [1, 2, 0],
-    [2, 2, 0],
     [2, 1, 0],
-    [-1, 0, 0],
-    [-2, 0, 0],
-    [-2, 0, 1],
-    [-2, 0, 2],
-    [-1, 0, 2],
+    [2, 2, 0],
+    [2, 2, 1],
+    [2, 2, 2],
+    [2, 1, 2],
+    [2, 0, 2],
+    [1, 0, 2],
+    [1, 0, 2],
     [0, 0, 2],
     [0, 0, 1],
   ]
+
+  for (let i=0; i < 5; i++){
+    cubes.push([0, 0, -i])
+    cubes.push([0, -i, 0])
+  }
+
 
   const lights = [
     [5, 5, 5],
@@ -125,7 +126,9 @@ function App() {
       <BackDrop />
       { lights.map((coord) => <DirectionalLight brightness={20} color={"#ffffff"} position={coord} />)}
       { cubes.map((box) => <Box playerData={playerState} position={box} />)}
-      <Marker />
+      {/*<Marker />*/}
+      {/*<PlaneCube />*/}
+      <Changeling playerData={playerState}/> {/* use this to pass in location of player to toggle through changeling modes */}
     </Canvas>
   );
 }
