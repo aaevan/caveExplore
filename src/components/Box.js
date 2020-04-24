@@ -1,51 +1,56 @@
-import React, { useRef, useState } from "react";
-import { translateByPlayerCoord, findDistFromCoord } from "../helpers"
-import { useFrame } from "react-three-fiber";
-import { DoubleSide } from "three";
+import React, { useRef, useState, } from "react";
+import { translateByPlayerCoord, findDistFromCoord, } from "../helpers"
+import { useFrame, } from "react-three-fiber";
 
-export function Box({ scale, position, rotation, color, playerData }) {
+export const Box = ({ scale, position, rotation, color, playerData }) => {
   const baseCoord = position
   const mesh = useRef()
+  const cameraCoord = [-2, 1, 3]
 
   const [displayCoord, setDisplayCoord] = useState(position)
-  const [distFromPlayer, setDistFromPlayer] = useState(1);
   const [distOpacity, setDistOpacity] = useState(.5);
 
-  useFrame(() => { setDisplayCoord(translateByPlayerCoord(playerData, baseCoord)) })
-  useFrame(() => { setDistFromPlayer(findDistFromCoord(playerData.coord, baseCoord)) })
   useFrame(() => {
-    if (distFromPlayer === 0) {
+    // immediately update display coord on player move:
+    setDisplayCoord(translateByPlayerCoord(playerData, baseCoord)) 
+    // find distance of box currently from player:
+    let distFromPlayer = findDistFromCoord(playerData.coord, baseCoord)
+    // find distance of box from the camera to prevent obscuring everything else:
+    let distFromCamera = findDistFromCoord(cameraCoord, displayCoord)
+    // use distance to lower the opacity of cells the further out they get:
+    if (distFromCamera <= 1) {
+      setDistOpacity(0);
+    } else if (distFromPlayer === 0) {
       setDistOpacity(Box.defaultProps.opacity)
     } else {
       let inverseSq = (.25 / distFromPlayer ** 2 + .01);
-      inverseSq > .025 ? setDistOpacity(inverseSq) : setDistOpacity(0);
+      // hide all cubes greater than a distance of 5 from current player location:
+      distFromPlayer < 3 ? setDistOpacity(inverseSq) : setDistOpacity(0);
+
     }
   })
 
-  return (
-    <mesh
-      ref={mesh}
-      key={`box-${position}`}
-      visible
-      scale={scale}
-      position={displayCoord}
-      rotation={rotation}
+return (
+  <mesh
+    ref={mesh}
+    key={`box-${position}`}
+    visible
+    scale={scale}
+    position={displayCoord}
+    color={color}
+    castShadow
+  >
+    <boxBufferGeometry attach="geometry" args={scale} />
+    <meshStandardMaterial
+      attach="material"
       color={color}
-      castShadow
-    >
-      <boxGeometry attach="geometry" args={scale} />
-      <meshStandardMaterial
-        attach="material"
-        color={color}
-        emissiveIntensity={.5}
-        transparent={true}
-        opacity={distOpacity}
-        roughness={0.1}
-        metalness={0.1}
-        side={DoubleSide}
-      />
-    </mesh>
-  );
+      transparent={true}
+      opacity={distOpacity}
+      //fix problem of camera in a box and everything else is hidden:
+      visible={distOpacity > 0 ? true : false}
+    />
+  </mesh>
+);
 }
 
 Box.defaultProps = {

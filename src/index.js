@@ -6,7 +6,7 @@ import { InputManager } from "./InputManager"
 import { degToRad } from "./helpers"
 
 import "./styles.css";
-//import { Marker } from "./components/Marker";
+import { Marker } from "./components/Marker";
 //import { PlaneCube } from "./components/PlaneCube";
 import { Changeling } from "./components/Changeling";
 
@@ -56,7 +56,7 @@ function App() {
     console.log("playerState:", playerState.coord, "keyData:", keyData)
     let [newX, newY, newZ] = playerState.coord
     console.log("newX/Y/Z:", newX, newY, newZ);
-    let {x, y, z} = keyData;
+    let { x, y, z } = keyData;
     console.log("keyData (x, y, z)", x, y, z);
     newX = newX + x
     newY = newY + y
@@ -65,18 +65,16 @@ function App() {
   };
 
   const handleInput = (action, data) => {
-    console.log(`handleinput: ${action}:${JSON.stringify(data)}`)
+    //console.log(`handleinput: ${action}:${JSON.stringify(data)}`)
     if (action === "move") {
       let destination = movePlayer(playerState, data)
-      for (let coord of cubes) {
-        if (JSON.stringify(coord) === JSON.stringify(destination)) {
+      for (let coord of [...cubeMap]) {
+        if (coord === JSON.stringify(destination)) {
           playerState.coord = destination;
-          console.log("New coord:", destination);
+          //console.log("New coord:", destination);
           break
         }
       }
-    }
-    if (action === "spawnCube") {
     }
 
     console.log(playerState.coord)
@@ -92,8 +90,15 @@ function App() {
     }
   })
 
+
+  //let cubes = new Set()
+  let cubeMap = new Set()
+
   let cubes = [
+    //we read from this list but there's an extra layer of stringifying
+    //for makind sure the keys are unique
     [0, 0, 0],
+    [-1, 0, 0],
     [1, 0, 0],
     [2, 0, 0],
     [2, 1, 0],
@@ -106,13 +111,24 @@ function App() {
     [1, 0, 2],
     [0, 0, 2],
     [0, 0, 1],
+    [0, 0, 0],
+    [0, 0, 0],
+    [0, 0, 0],
+    [-2, 1, 3],
   ]
 
-  for (let i=0; i < 5; i++){
-    cubes.push([0, 0, -i])
-    cubes.push([0, -i, 0])
+
+  for (let coord of cubes) {
+    console.log("adding:", coord)
+    cubeMap.add(JSON.stringify(coord))
   }
 
+  const randInt = (minVal, maxVal) => (Math.round(Math.random() * (maxVal - minVal)) + minVal);
+  for (let i = 0; i < 50; i++ ) {
+    let coord = [randInt(-5, 5), randInt(-5, 5), randInt(-5, 5)]
+    cubeMap.add(JSON.stringify(coord))
+  }
+  console.log("cubeMap:", cubeMap)
 
   const lights = [
     [5, 5, 5],
@@ -122,13 +138,17 @@ function App() {
   ]
 
   return (
-    <Canvas camera={{position: [-2, 1, 3]}} className="canvas" >
+    <Canvas camera={{ position: [-2, 1, 3] }} className="canvas" >
       <BackDrop />
-      { lights.map((coord) => <DirectionalLight brightness={20} color={"#ffffff"} position={coord} />)}
-      { cubes.map((box) => <Box playerData={playerState} position={box} />)}
-      {/*<Marker />*/}
+      {lights.map((coord) => <DirectionalLight brightness={20} color={"#ffffff"} position={coord} />)}
+      {[...cubeMap].map((coord) => 
+        {
+          console.log("creating cube at", coord, "...")
+          return <Box playerData={playerState} position={JSON.parse(coord)} />
+        })}
+      <Marker />
       {/*<PlaneCube />*/}
-      <Changeling playerData={playerState}/> {/* use this to pass in location of player to toggle through changeling modes */}
+      {/*<Changeling playerData={playerState} />*/} {/* use this to pass in location of player to toggle through changeling modes */}
     </Canvas>
   );
 }

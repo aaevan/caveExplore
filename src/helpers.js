@@ -1,3 +1,5 @@
+import { useEffect, useRef } from 'react';
+
 export const interpRGB = (color_a = [0, 0, 0], color_b = [255, 255, 255], fade_val = .5) => {
   // given two 3-item arrays, return a value that is a linear interpolation between the two.
   // a fade_val of 0 will return color_a
@@ -67,4 +69,27 @@ export function checkEqual(coordA = [9, 9, 9], coordB = [7, 7, 7]) {
     }
   }
   return true
+}
+
+export function useInterval(callback, delay) {
+  // copied from:
+  // https://overreacted.io/making-setinterval-declarative-with-react-hooks/
+
+  const savedCallback = useRef();
+
+  // Remember the latest callback.
+  useEffect(() => {
+    savedCallback.current = callback;
+  }, [callback]);
+
+  // Set up the interval.
+  useEffect(() => {
+    function tick() {
+      savedCallback.current();
+    }
+    if (delay !== null) {
+      let id = setInterval(tick, delay);
+      return () => clearInterval(id);
+    }
+  }, [delay]);
 }
